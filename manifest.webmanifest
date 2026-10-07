@@ -1,0 +1,10 @@
+{
+  "name": "रक्त डोनर नेटवर्क",
+  "short_name": "रक्त",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff8f8",
+  "theme_color": "#b5122b",
+  "description": "Blood donor and emergency request network",
+  "icons": []
+}
