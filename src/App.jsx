@@ -4,7 +4,7 @@ import {
   Droplets, HeartPulse, Home, LogOut, MapPin, Menu, MessageCircle,
   MoreHorizontal, Search, Settings, ShieldCheck, Smartphone, UserRound,
   Users, X, UserCheck, ClipboardList, BarChart3, Clock3, Phone, Plus,
-  Navigation, CircleUserRound, HandHeart, LifeBuoy
+  Navigation, CircleUserRound, HandHeart, LifeBuoy, FileCheck2, Upload, Send, Map, ShieldAlert
 } from "lucide-react";
 
 const bloodGroups = ["A+","A-","B+","B-","AB+","AB-","O+","O-"];
@@ -55,7 +55,7 @@ function App(){
   const nav = {
     user:[
       ["dashboard","डैशबोर्ड",Home],["donors","डोनर खोजें",Search],["requests","ब्लड रिक्वेस्ट",ClipboardList],
-      ["messages","मैसेज",MessageCircle],["profile","मेरी प्रोफाइल",UserRound]
+      ["messages","मैसेज",MessageCircle],["profile","मेरी प्रोफाइल",UserRound],["verification","वेरिफिकेशन",FileCheck2]
     ],
     volunteer:[
       ["dashboard","डैशबोर्ड",Home],["cases","केसेस",LifeBuoy],["donors","डोनर खोजें",Users],
@@ -63,7 +63,7 @@ function App(){
     ],
     admin:[
       ["dashboard","डैशबोर्ड",Home],["users","यूज़र्स",Users],["requests","रिक्वेस्ट",ClipboardList],
-      ["volunteers","वॉलंटियर्स",UserCheck],["reports","रिपोर्ट्स",BarChart3],["settings","सेटिंग्स",Settings]
+      ["volunteers","वॉलंटियर्स",UserCheck],["verification","वेरिफिकेशन",FileCheck2],["reports","रिपोर्ट्स",BarChart3],["settings","सेटिंग्स",Settings]
     ]
   }[role];
 
@@ -109,7 +109,7 @@ function App(){
         {page==="donors" && <Donors blood={blood} setBlood={setBlood} search={search} setSearch={setSearch} donors={filteredDonors} onNotify={notify}/>}
         {page==="requests" && <Requests role={role} requests={requests} setRequests={setRequests} onNotify={notify} onRequest={()=>setShowRequest(true)}/>}
         {page==="messages" && <Messages onNotify={notify}/>}
-        {page==="profile" && <Profile role={role} onNotify={notify}/>}
+        {page==="profile" && <Profile role={role} onNotify={notify}/>}\n        {page==="verification" && <Verification role={role} onNotify={notify}/>}
         {page==="cases" && <VolunteerCases onNotify={notify}/>}
         {page==="users" && <AdminUsers onNotify={notify}/>}
         {page==="volunteers" && <AdminVolunteers onNotify={notify}/>}
@@ -172,3 +172,9 @@ function RequestModal({blood,setBlood,onClose,onCreate}){const [name,setName]=us
 function PageTitle({icon:Icon,title,sub}){return <div className="page-title"><div className="title-icon"><Icon/></div><div><h1>{title}</h1><p>{sub}</p></div></div>}
 
 export default App;
+
+function Verification({role,onNotify}){
+ const [items,setItems]=useState([{id:1,name:"सुरेश पटेल",type:"Donor",blood:"O+",doc:"Blood ID / Photo ID",status:"Pending"},{id:2,name:"कविता सिंह",type:"Volunteer",blood:"B+",doc:"Volunteer ID",status:"Pending"},{id:3,name:"अंकित मिश्रा",type:"Volunteer",blood:"O+",doc:"Verified ID",status:"Approved"}]);
+ const update=(id,status)=>{setItems(items.map(x=>x.id===id?{...x,status}:x));onNotify(status==="Approved"?"Verification approved":"Verification rejected")};
+ return <><PageTitle icon={FileCheck2} title="Verification Center" sub={role==="admin"?"Donor और volunteer verification तथा approval":"Assigned verification tasks complete करें"}/><div className="verification-banner"><ShieldAlert size={24}/><div><b>Safe Donor Network</b><span>Identity, eligibility और documents verify करने के बाद trusted badge दें।</span></div></div><div className="panel table-panel"><div className="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Blood</th><th>Document</th><th>Status</th><th>Action</th></tr></thead><tbody>{items.map(x=><tr key={x.id}><td><b>{x.name}</b></td><td>{x.type}</td><td><span className="table-blood">{x.blood}</span></td><td><span className="doc-pill"><Upload size={12}/>{x.doc}</span></td><td><span className={x.status==="Approved"?"status active":"status pending"}>{x.status}</span></td><td>{x.status==="Pending"?<><button className="small-btn" onClick={()=>update(x.id,"Approved")}>Approve</button> <button className="small-btn danger" onClick={()=>update(x.id,"Rejected")}>Reject</button></>:<button className="small-btn" onClick={()=>onNotify("Verification details खोले गए")}>View</button>}</td></tr>)}</tbody></table></div></div></>
+}
